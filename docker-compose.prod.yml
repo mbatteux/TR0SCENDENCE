@@ -1,0 +1,59 @@
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.prod
+    command: daphne transcendance.asgi:application -b 0.0.0.0 -p 8000
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - www:/var/www/transcendance
+      - media_volume:/home/app/web/mediafiles
+    expose:
+      - 8000
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - database
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - www:/var/www/transcendance
+      - media_volume:/home/app/web/mediafiles
+    expose:
+      - 8080
+    env_file:
+      - ./.env.prod
+    depends_on:
+      - backend
+
+  nginx:
+    build: ./nginx
+    volumes:
+      - static_volume:/home/app/web/staticfiles
+      - www:/var/www/transcendance
+      - media_volume:/home/app/web/mediafiles
+    ports:
+      - 1331:80
+      - 1332:443
+    depends_on:
+      - backend
+      - frontend
+
+  database:
+    image: postgres:15
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    env_file:
+      - ./.db.env.prod
+    expose:
+      - 5432
+
+volumes:
+  postgres_data:
+  static_volume:
+  www:
+  media_volume:

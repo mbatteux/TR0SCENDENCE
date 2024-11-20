@@ -1,0 +1,34 @@
+{
+	"devs": [
+		{
+			"name": "Antoine Massias",
+			"nickname": "amassias",
+			"src": "/ressources/dev_pp/antoine2.webp",
+			"alt": "Gros BG retourneur de cartes meres"
+		},
+		{
+			"name": "Louis Laigle",
+			"nickname": "llaigle",
+			"src": "/ressources/dev_pp/louis.webp",
+			"alt": "Gros BG brasseur de logique"
+		},
+		{
+			"name": "Mathis Batteux",
+			"nickname": "mbatteux",
+			"src": "/ressources/dev_pp/mathis.webp",
+			"alt": "Gros BG dark sapologue ultime"
+		},
+		{
+			"name": "Simon Carpentier",
+			"nickname": "scarpent",
+			"src": "/ressources/dev_pp/simon.webp",
+			"alt": "Gros BG de la grandiloquence"
+		},
+		{
+			"name": "Alan Le Bouder",
+			"nickname": "ale-boud",
+			"src": "/ressources/dev_pp/alan1.webp",
+			"alt": "Gros BG terreur des syscalls"
+		}
+	]
+}

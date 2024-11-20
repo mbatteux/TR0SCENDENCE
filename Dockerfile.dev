@@ -1,0 +1,5 @@
+FROM	node:lts-alpine AS vue
+
+WORKDIR	/app/frontend/
+COPY	./package*.json ./
+RUN		npm install
