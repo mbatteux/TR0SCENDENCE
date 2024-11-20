@@ -1,0 +1,57 @@
+# Builder
+FROM	python:3.11.4-slim-buster AS django
+
+ENV		PYTHONDONTWRITEBYTECODE=1
+ENV		PYTHONUNBUFFERED=1
+ENV		DEBCONF_NOWARNINGS=yes
+ENV		PATH=/home/builder/.local/bin:$PATH
+
+RUN		apt-get update &&								\
+		apt-get install -y --no-install-recommends gcc
+
+RUN		addgroup --system builder &&		\
+		adduser --system --group builder
+
+WORKDIR	/home/builder/app/
+
+COPY	./ ./
+
+RUN		chown -R builder:builder ./
+USER	builder
+
+RUN		pip install --upgrade pip
+RUN		pip wheel					\
+			--no-cache-dir			\
+			--no-deps				\
+			--wheel-dir ./wheels/	\
+			-r ./requirements.txt
+
+# Final
+FROM	python:3.11.4-slim-buster
+
+ENV		DEBCONF_NOWARNINGS=yes
+ENV		PATH=/home/app/.local/bin:$PATH
+
+RUN		apt-get update &&									\
+		apt-get install -y --no-install-recommends netcat
+
+RUN		addgroup --system app &&		\
+		adduser --system --group app
+
+WORKDIR	/home/app/web
+
+RUN		mkdir ./staticfiles/
+RUN		mkdir ./mediafiles/
+
+COPY	./ ./
+COPY	--from=django /home/builder/app/wheels/ ./wheels/
+COPY	--from=django /home/builder/app/requirements.txt ./
+
+RUN		chown -R app:app /home/app/
+RUN		chmod +x ./entrypoint.prod.sh
+USER	app
+
+RUN		pip install --upgrade pip
+RUN		pip install --no-cache ./wheels/*
+
+ENTRYPOINT [ "./entrypoint.prod.sh" ]
